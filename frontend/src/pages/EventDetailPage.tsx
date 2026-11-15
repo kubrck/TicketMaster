@@ -3,13 +3,12 @@
  */
 
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, MapPin, Users, Clock, CreditCard } from 'lucide-react';
 import { getEvent, getEventSeats } from '@/services/events';
 import { reserveSeat, waitForJobCompletion } from '@/services/bookings';
 import { useAuth } from '@/context/AuthContext';
-import { Button, Card } from '@/components/ui';
+import { Button } from '@/components/ui';
 import type { Seat, SeatStatusType } from '@/types';
 import styles from './EventDetailPage.module.css';
 
@@ -58,25 +57,11 @@ export function EventDetailPage() {
       navigate(`/my-bookings`);
     },
     onError: (error) => {
+      // The seat may have just been taken; show the current map
+      queryClient.invalidateQueries({ queryKey: ['seats', id] });
       setReservationError(error instanceof Error ? error.message : 'Reservation failed');
     },
   });
-
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
-  const formatTime = (dateString: string): string => {
-    return new Date(dateString).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat('en-US', {
@@ -115,10 +100,7 @@ export function EventDetailPage() {
   if (eventLoading || seatsLoading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>
-          <div className={styles.spinner} />
-          <p>Loading event details...</p>
-        </div>
+        <p className={styles.status}>Loading event…</p>
       </div>
     );
   }
@@ -126,177 +108,173 @@ export function EventDetailPage() {
   if (!event) {
     return (
       <div className={styles.container}>
-        <div className={styles.error}>
-          <h2>Event not found</h2>
-          <p>The event you're looking for doesn't exist.</p>
-          <Button onClick={() => navigate('/events')}>
-            Browse Events
-          </Button>
+        <div className={styles.notFound}>
+          <h1>Event not found</h1>
+          <p>This event doesn’t exist or is no longer on sale.</p>
+          <Button onClick={() => navigate('/events')}>Browse events</Button>
         </div>
       </div>
     );
   }
 
   const seats = seatsData?.seats || [];
-  const seatsBySection = seats.reduce((acc: Record<string, Seat[]>, seat: Seat) => {
+  const byNumber = (a: string, b: string) => a.localeCompare(b, undefined, { numeric: true });
+  // Seats are named like "R1-S3"; fall back to that prefix when row_number is empty
+  const rowOf = (seat: Seat) => seat.row_number || seat.seat_number.split('-')[0];
+  const labelOf = (seat: Seat) => {
+    const row = rowOf(seat);
+    return seat.seat_number.startsWith(`${row}-`)
+      ? seat.seat_number.slice(row.length + 1).replace(/^S/i, '')
+      : seat.seat_number;
+  };
+
+  const sections: Record<string, Record<string, Seat[]>> = {};
+  for (const seat of seats) {
     const section = seat.section || 'General';
-    if (!acc[section]) acc[section] = [];
-    acc[section].push(seat);
-    return acc;
-  }, {});
+    const row = rowOf(seat);
+    ((sections[section] ??= {})[row] ??= []).push(seat);
+  }
+
+  const date = new Date(event.event_date);
+  const dateText = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const timeText = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
   return (
     <div className={styles.container}>
-      <div className={styles.content}>
-        <div className={styles.mainContent}>
-          <div className={styles.eventHeader}>
-            <h1 className={styles.eventTitle}>{event.title}</h1>
-            <p className={styles.eventDescription}>{event.description}</p>
-            
-            <div className={styles.eventMeta}>
-              <div className={styles.metaItem}>
-                <Calendar className={styles.metaIcon} />
-                <span>{formatDate(event.event_date)}</span>
-              </div>
-              <div className={styles.metaItem}>
-                <Clock className={styles.metaIcon} />
-                <span>{formatTime(event.event_date)}</span>
-              </div>
-              {event.venue && (
-                <div className={styles.metaItem}>
-                  <MapPin className={styles.metaIcon} />
-                  <span>{event.venue.name}, {event.venue.city}</span>
-                </div>
-              )}
-              <div className={styles.metaItem}>
-                <Users className={styles.metaIcon} />
-                <span>{event.available_seats} of {event.total_seats} seats available</span>
-              </div>
+      <Link to="/events" className={styles.back}>← All events</Link>
+
+      <header className={styles.eventHeader}>
+        <p className={styles.eyebrow}>{dateText} · {timeText}</p>
+        <h1 className={styles.eventTitle}>{event.title}</h1>
+        {event.description && <p className={styles.eventDescription}>{event.description}</p>}
+
+        <dl className={styles.facts}>
+          {event.venue && (
+            <div>
+              <dt>Venue</dt>
+              <dd>{event.venue.name}, {event.venue.city}</dd>
             </div>
+          )}
+          <div>
+            <dt>Seats left</dt>
+            <dd>{event.available_seats} of {event.total_seats}</dd>
+          </div>
+          <div>
+            <dt>Price</dt>
+            <dd>{formatPrice(event.ticket_price)}</dd>
+          </div>
+        </dl>
+      </header>
+
+      <div className={styles.content}>
+        <section className={styles.seatSelection} aria-labelledby="seat-heading">
+          <div className={styles.seatHead}>
+            <h2 id="seat-heading" className={styles.sectionTitle}>Choose a seat</h2>
+            <ul className={styles.legend}>
+              <li><span className={`${styles.legendSwatch} ${styles.seatAvailable}`} />Available</li>
+              <li><span className={`${styles.legendSwatch} ${styles.seatSelected}`} />Selected</li>
+              <li><span className={`${styles.legendSwatch} ${styles.seatReserved}`} />Held</li>
+              <li><span className={`${styles.legendSwatch} ${styles.seatSold}`} />Sold</li>
+            </ul>
           </div>
 
-          <div className={styles.seatSelection}>
-            <h2 className={styles.sectionTitle}>Select Your Seat</h2>
-            
-            <div className={styles.legend}>
-              <div className={styles.legendItem}>
-                <span className={`${styles.legendDot} ${styles.seatAvailable}`} />
-                <span>Available</span>
-              </div>
-              <div className={styles.legendItem}>
-                <span className={`${styles.legendDot} ${styles.seatReserved}`} />
-                <span>Reserved</span>
-              </div>
-              <div className={styles.legendItem}>
-                <span className={`${styles.legendDot} ${styles.seatSold}`} />
-                <span>Sold</span>
-              </div>
-              <div className={styles.legendItem}>
-                <span className={`${styles.legendDot} ${styles.seatSelected}`} />
-                <span>Selected</span>
-              </div>
-            </div>
+          <div className={styles.map}>
+            <div className={styles.stage}><span>Stage</span></div>
 
-            <div className={styles.stage}>STAGE</div>
-
-            {Object.entries(seatsBySection).map(([section, sectionSeats]) => (
+            {Object.entries(sections).map(([section, rows]) => (
               <div key={section} className={styles.seatSection}>
                 <h3 className={styles.sectionName}>{section}</h3>
-                <div className={styles.seatGrid}>
-                  {sectionSeats.map((seat: Seat) => (
-                    <button
-                      key={seat.id}
-                      className={`${styles.seat} ${getSeatColor(seat.status)} ${
-                        selectedSeat?.id === seat.id ? styles.seatSelected : ''
-                      }`}
-                      onClick={() => handleSeatClick(seat)}
-                      disabled={seat.status !== 'available'}
-                      title={`Seat ${seat.seat_number}${seat.row_number ? `, Row ${seat.row_number}` : ''}`}
-                    >
-                      {seat.seat_number}
-                    </button>
-                  ))}
-                </div>
+                {Object.keys(rows).sort(byNumber).map((row) => (
+                  <div key={row} className={styles.seatRow}>
+                    <span className={styles.rowLabel}>{row}</span>
+                    <div className={styles.seatGrid}>
+                      {rows[row]
+                        .sort((a, b) => byNumber(a.seat_number, b.seat_number))
+                        .map((seat) => {
+                          const selected = selectedSeat?.id === seat.id;
+                          return (
+                            <button
+                              key={seat.id}
+                              type="button"
+                              className={`${styles.seat} ${getSeatColor(seat.status)} ${selected ? styles.seatSelected : ''}`}
+                              onClick={() => handleSeatClick(seat)}
+                              disabled={seat.status !== 'available'}
+                              aria-pressed={selected}
+                              aria-label={`Seat ${seat.seat_number}, ${seat.status}`}
+                              title={`Seat ${seat.seat_number}`}
+                            >
+                              {labelOf(seat)}
+                            </button>
+                          );
+                        })}
+                    </div>
+                    <span className={styles.rowLabel}>{row}</span>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
-        <div className={styles.sidebar}>
-          <Card className={styles.bookingCard}>
-            <Card.Header>
-              <Card.Title>Booking Summary</Card.Title>
-            </Card.Header>
-            
-            <Card.Content>
-              <div className={styles.summaryItem}>
-                <span>Event</span>
-                <span className={styles.summaryValue}>{event.title}</span>
-              </div>
-              
-              <div className={styles.summaryItem}>
-                <span>Date</span>
-                <span className={styles.summaryValue}>{formatDate(event.event_date)}</span>
-              </div>
-              
-              <div className={styles.summaryItem}>
-                <span>Time</span>
-                <span className={styles.summaryValue}>{formatTime(event.event_date)}</span>
-              </div>
-              
-              {selectedSeat && (
-                <>
-                  <div className={styles.divider} />
+        <aside className={styles.sidebar}>
+          <div className={styles.summary}>
+            <div className={styles.summaryMain}>
+              <p className={styles.summaryLabel}>Your ticket</p>
+              <h2 className={styles.summaryTitle}>{event.title}</h2>
+              <dl className={styles.summaryList}>
+                <div className={styles.summaryItem}>
+                  <dt>Date</dt>
+                  <dd>{date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</dd>
+                </div>
+                <div className={styles.summaryItem}>
+                  <dt>Time</dt>
+                  <dd>{timeText}</dd>
+                </div>
+                <div className={styles.summaryItem}>
+                  <dt>Seat</dt>
+                  <dd className={selectedSeat ? styles.summarySeat : styles.summaryEmpty}>
+                    {selectedSeat ? selectedSeat.seat_number : 'Not chosen'}
+                  </dd>
+                </div>
+                {selectedSeat && (
                   <div className={styles.summaryItem}>
-                    <span>Seat</span>
-                    <span className={styles.summaryValue}>
-                      {selectedSeat.seat_number}
-                      {selectedSeat.row_number && `, Row ${selectedSeat.row_number}`}
-                    </span>
+                    <dt>Section</dt>
+                    <dd>{selectedSeat.section || 'General'}</dd>
                   </div>
-                  <div className={styles.summaryItem}>
-                    <span>Section</span>
-                    <span className={styles.summaryValue}>
-                      {selectedSeat.section || 'General'}
-                    </span>
-                  </div>
-                </>
-              )}
-              
-              <div className={styles.divider} />
-              
+                )}
+              </dl>
+            </div>
+
+            <div className={styles.summaryStub}>
               <div className={styles.totalRow}>
                 <span>Total</span>
                 <span className={styles.totalPrice}>
-                  {selectedSeat ? formatPrice(event.ticket_price) : '$0.00'}
+                  {formatPrice(selectedSeat ? event.ticket_price : 0)}
                 </span>
               </div>
 
               {reservationError && (
-                <div className={styles.reservationError}>
-                  {reservationError}
-                </div>
+                <p className={styles.reservationError} role="alert">{reservationError}</p>
               )}
-            </Card.Content>
-            
-            <Card.Footer>
+
               <Button
-                variant="primary"
+                variant="secondary"
+                size="lg"
                 className={styles.reserveButton}
                 onClick={handleReserve}
-                disabled={!selectedSeat || reserveMutation.isPending}
+                disabled={(isAuthenticated && !selectedSeat) || reserveMutation.isPending}
                 isLoading={reserveMutation.isPending}
-                leftIcon={<CreditCard />}
               >
-                {!isAuthenticated 
-                  ? 'Login to Reserve' 
-                  : selectedSeat 
-                    ? 'Reserve Seat' 
-                    : 'Select a Seat'}
+                {!isAuthenticated
+                  ? 'Log in to reserve'
+                  : selectedSeat
+                    ? 'Reserve this seat'
+                    : 'Choose a seat first'}
               </Button>
-            </Card.Footer>
-          </Card>
-        </div>
+              <p className={styles.holdNote}>Held for you for 10 minutes once reserved.</p>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );

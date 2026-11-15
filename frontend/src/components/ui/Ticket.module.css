@@ -1,0 +1,112 @@
+.ticket {
+  --stub: 5.25rem;
+  --notch: 0.6rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--stub) 1fr auto;
+  grid-template-areas: 'stub body aside';
+  min-height: 7.5rem;
+  background: var(--card);
+  border-radius: var(--radius-md);
+  /* Half-circle notches above and below the perforation */
+  -webkit-mask:
+    radial-gradient(circle at var(--stub) 0, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) top / 100% 51% no-repeat,
+    radial-gradient(circle at var(--stub) 100%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) bottom / 100% 51% no-repeat;
+  mask:
+    radial-gradient(circle at var(--stub) 0, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) top / 100% 51% no-repeat,
+    radial-gradient(circle at var(--stub) 100%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) bottom / 100% 51% no-repeat;
+}
+
+.stub {
+  grid-area: stub;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.stubDate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.month,
+.weekday {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.month {
+  color: var(--accent-on-ink);
+}
+
+.weekday {
+  color: #b8b0a2;
+}
+
+.day {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 2.75rem;
+  margin: 0.15rem 0 0.2rem;
+}
+
+.body {
+  grid-area: body;
+  min-width: 0;
+  padding: 1.125rem 1.25rem;
+  border-left: 2px dashed var(--line-strong);
+  margin-left: -1px;
+}
+
+.aside {
+  grid-area: aside;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.125rem 1.25rem 1.125rem 0;
+}
+
+.muted .stub {
+  background: var(--ink-3);
+}
+
+.muted .body,
+.muted .aside {
+  opacity: 0.62;
+}
+
+@media (max-width: 559px) {
+  .ticket {
+    --stub: 4.25rem;
+    grid-template-columns: var(--stub) 1fr;
+    grid-template-areas:
+      'stub body'
+      'stub aside';
+  }
+
+  .day {
+    font-size: 2.25rem;
+  }
+
+  .body {
+    padding: 1rem 1rem 0.5rem;
+  }
+
+  .aside {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0 1rem 1rem;
+    border-left: 2px dashed var(--line-strong);
+    margin-left: -1px;
+  }
+}

@@ -22,3 +22,4 @@ export {
   CardContent, 
   CardFooter 
 } from './Card';
+export { Ticket } from './Ticket';

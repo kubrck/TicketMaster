@@ -44,9 +44,9 @@ export function LoginPage() {
     <div className={styles.container}>
       <Card className={styles.card}>
         <Card.Header>
-          <Card.Title>Welcome Back</Card.Title>
+          <Card.Title>Welcome back</Card.Title>
           <Card.Description>
-            Sign in to your account to continue
+            Log in to reserve seats and see your tickets.
           </Card.Description>
         </Card.Header>
         
@@ -84,7 +84,7 @@ export function LoginPage() {
               isLoading={isLoading}
               className={styles.submitButton}
             >
-              Sign In
+              Log in
             </Button>
           </form>
         </Card.Content>

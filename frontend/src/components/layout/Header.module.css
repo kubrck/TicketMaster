@@ -1,191 +1,192 @@
-/**
- * Header Component Styles
- */
-
 .header {
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 50;
+  background: rgb(243 239 230 / 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1.5px solid var(--ink);
 }
 
 .container {
-  max-width: 1200px;
+  max-width: var(--page-width);
   margin: 0 auto;
-  padding: 0 var(--spacing-md);
+  padding: 0 var(--gutter);
 }
 
 .headerContent {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
+  height: 4rem;
 }
 
-/* Logo */
 .logo {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  font-weight: 700;
-  font-size: var(--font-size-xl);
-  color: var(--color-text);
-  text-decoration: none;
+  gap: 0.625rem;
+  color: var(--ink);
 }
 
-.logo:hover {
-  color: var(--color-primary);
-}
-
+/* A small ticket with a notched edge */
 .logoIcon {
-  width: 28px;
-  height: 28px;
-  color: var(--color-primary);
+  width: 1.375rem;
+  height: 0.95rem;
+  background: var(--accent);
+  border-radius: 2px;
+  -webkit-mask: radial-gradient(circle at 0 50%, transparent 0.2rem, #000 0.21rem) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 50%, transparent 0.2rem, #000 0.21rem) right / 51% 100% no-repeat;
+  mask: radial-gradient(circle at 0 50%, transparent 0.2rem, #000 0.21rem) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 50%, transparent 0.2rem, #000 0.21rem) right / 51% 100% no-repeat;
 }
 
 .logoText {
-  background: linear-gradient(135deg, var(--color-primary) 0%, #818cf8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.625rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
 }
 
-/* Desktop Navigation */
 .desktopNav {
-  display: flex;
+  display: none;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .desktopNav {
+    display: flex;
+  }
 }
 
 .navLink {
-  font-size: var(--font-size-sm);
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  padding: var(--spacing-sm);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  padding: 0.25rem 0;
+  transition: color var(--transition-fast);
 }
 
 .navLink:hover {
-  color: var(--color-text);
-  background-color: var(--color-background);
+  color: var(--ink);
 }
 
-/* User Section */
-.userSection {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding-left: var(--spacing-md);
-  border-left: 1px solid var(--color-border);
+.navLinkActive {
+  color: var(--ink);
 }
 
-.userInfo {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
+.navLinkActive::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.35rem;
+  height: 2px;
+  background: var(--accent);
 }
 
-.userIcon {
-  width: 20px;
-  height: 20px;
-  color: var(--color-text-secondary);
-}
-
-.userName {
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-/* Auth Buttons */
+.userSection,
 .authButtons {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: 1.25rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--line);
 }
 
-/* Mobile Menu Button */
+.userName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink);
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .mobileMenuButton {
-  display: none;
-  padding: var(--spacing-sm);
-  border-radius: var(--radius-md);
-  color: var(--color-text-secondary);
-  background: none;
-  border: none;
-  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-right: -0.5rem;
+  border-radius: var(--radius-sm);
+  color: var(--ink);
 }
 
 .mobileMenuButton:hover {
-  background-color: var(--color-background);
-  color: var(--color-text);
+  background: var(--paper-sunk);
+}
+
+@media (min-width: 768px) {
+  .mobileMenuButton {
+    display: none;
+  }
 }
 
 .menuIcon {
-  width: 24px;
-  height: 24px;
+  width: 1.375rem;
+  height: 1.375rem;
 }
 
-/* Mobile Navigation */
 .mobileNav {
-  display: none;
-  padding: var(--spacing-md);
-  border-top: 1px solid var(--color-border);
-  background-color: var(--color-surface);
+  border-top: 1px solid var(--line);
+  padding: 0.5rem 0 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .mobileNav {
+    display: none;
+  }
 }
 
 .mobileNavContent {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
 }
 
 .mobileNavLink {
-  display: block;
-  padding: var(--spacing-md);
-  font-size: var(--font-size-base);
-  font-weight: 500;
-  color: var(--color-text);
-  text-decoration: none;
-  border-radius: var(--radius-md);
-  transition: background-color var(--transition-fast);
-}
-
-.mobileNavLink:hover {
-  background-color: var(--color-background);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.75rem;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
 }
 
 .mobileUserSection {
-  margin-top: var(--spacing-md);
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1rem;
 }
 
 .mobileUserEmail {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-md);
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mobileAuthButtons {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  padding-top: 1rem;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .desktopNav {
-    display: none;
-  }
-
-  .mobileMenuButton {
-    display: flex;
-  }
-
-  .mobileNav {
-    display: block;
-  }
+.mobileAuthButtons > a > button {
+  width: 100%;
 }

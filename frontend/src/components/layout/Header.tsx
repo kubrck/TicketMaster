@@ -2,8 +2,8 @@
  * Header Component - Main navigation bar
  */
 
-import { Link, useNavigate } from 'react-router-dom';
-import { Ticket, User, LogOut, Menu, X } from 'lucide-react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { LogOut, Menu, X } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui';
@@ -37,26 +37,23 @@ export function Header() {
       <div className={styles.container}>
         <div className={styles.headerContent}>
           <Link to="/" className={styles.logo}>
-            <Ticket className={styles.logoIcon} />
+            <span className={styles.logoIcon} aria-hidden="true" />
             <span className={styles.logoText}>TicketMaster</span>
           </Link>
 
           <nav className={styles.desktopNav}>
-            <Link to="/events" className={styles.navLink}>
+            <NavLink to="/events" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}>
               Events
-            </Link>
+            </NavLink>
             
             {isAuthenticated ? (
               <>
-                <Link to="/my-bookings" className={styles.navLink}>
-                  My Bookings
-                </Link>
+                <NavLink to="/my-bookings" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}>
+                  My tickets
+                </NavLink>
                 
                 <div className={styles.userSection}>
-                  <div className={styles.userInfo}>
-                    <User className={styles.userIcon} />
-                    <span className={styles.userName}>{user?.full_name}</span>
-                  </div>
+                  <span className={styles.userName}>{user?.full_name}</span>
                   
                   <Button 
                     variant="ghost" 
@@ -64,17 +61,17 @@ export function Header() {
                     onClick={handleLogout}
                     leftIcon={<LogOut />}
                   >
-                    Logout
+                    Log out
                   </Button>
                 </div>
               </>
             ) : (
               <div className={styles.authButtons}>
-                <Link to="/login">
-                  <Button variant="ghost">Login</Button>
-                </Link>
+                <NavLink to="/login" className={styles.navLink}>
+                  Log in
+                </NavLink>
                 <Link to="/register">
-                  <Button variant="primary">Sign Up</Button>
+                  <Button variant="primary" size="sm">Sign up</Button>
                 </Link>
               </div>
             )}
@@ -113,7 +110,7 @@ export function Header() {
                     className={styles.mobileNavLink}
                     onClick={closeMobileMenu}
                   >
-                    My Bookings
+                    My tickets
                   </Link>
                   <div className={styles.mobileUserSection}>
                     <p className={styles.mobileUserEmail}>
@@ -124,17 +121,17 @@ export function Header() {
                       size="sm"
                       onClick={handleMobileLogout}
                     >
-                      Logout
+                      Log out
                     </Button>
                   </div>
                 </>
               ) : (
                 <div className={styles.mobileAuthButtons}>
                   <Link to="/login" onClick={closeMobileMenu}>
-                    <Button variant="outline">Login</Button>
+                    <Button variant="outline">Log in</Button>
                   </Link>
                   <Link to="/register" onClick={closeMobileMenu}>
-                    <Button variant="primary">Sign Up</Button>
+                    <Button variant="primary">Sign up</Button>
                   </Link>
                 </div>
               )}

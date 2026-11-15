@@ -23,7 +23,8 @@ export default defineConfig({
     // Proxy API requests to backend during development
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        // e.g. API_PROXY_TARGET=https://ticketmaster-l6oa.onrender.com npm run dev
+        target: process.env.API_PROXY_TARGET ?? 'http://localhost:8080',
         changeOrigin: true,
       },
     },

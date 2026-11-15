@@ -57,12 +57,12 @@ function NotFoundPage() {
   return (
     <div className={styles.notFoundPage}>
       <h1 className={styles.notFoundCode}>404</h1>
-      <h2 className={styles.notFoundTitle}>Page Not Found</h2>
+      <h2 className={styles.notFoundTitle}>Wrong door</h2>
       <p className={styles.notFoundText}>
-        The page you're looking for doesn't exist or has been moved.
+        This page doesn’t exist. The show is somewhere else.
       </p>
       <Link to="/" className={styles.notFoundLink}>
-        Go back home
+        Back to the box office
       </Link>
     </div>
   );

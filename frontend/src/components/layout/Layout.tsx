@@ -19,25 +19,12 @@ export function Layout() {
         <Outlet />
       </main>
       
-      {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerContainer}>
-          <div className={styles.footerContent}>
-            <p className={styles.copyright}>
-              © 2026 TicketMaster. All rights reserved.
-            </p>
-            <div className={styles.footerLinks}>
-              <a href="#" className={styles.footerLink}>
-                Privacy Policy
-              </a>
-              <a href="#" className={styles.footerLink}>
-                Terms of Service
-              </a>
-              <a href="#" className={styles.footerLink}>
-                Contact
-              </a>
-            </div>
-          </div>
+          <span className={styles.footerMark}>TicketMaster</span>
+          <p className={styles.footerNote}>
+            Seats are held for 10 minutes while you check out. One seat, one buyer.
+          </p>
         </div>
       </footer>
     </div>

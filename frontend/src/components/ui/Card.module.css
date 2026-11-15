@@ -1,39 +1,33 @@
-/**
- * Card Component Styles
- */
-
 .card {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .header {
-  padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--color-border);
+  padding: 1.5rem 1.5rem 0;
 }
 
 .title {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--color-text);
-  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
 }
 
 .description {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  margin: var(--spacing-xs) 0 0 0;
+  margin-top: 0.5rem;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
 }
 
 .content {
-  padding: var(--spacing-lg);
+  padding: 1.5rem;
 }
 
 .footer {
-  padding: var(--spacing-lg);
-  border-top: 1px solid var(--color-border);
-  background-color: var(--color-background);
+  padding: 1rem 1.5rem 1.5rem;
 }

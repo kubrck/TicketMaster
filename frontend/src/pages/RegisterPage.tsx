@@ -54,9 +54,9 @@ export function RegisterPage() {
     <div className={styles.container}>
       <Card className={styles.card}>
         <Card.Header>
-          <Card.Title>Create Account</Card.Title>
+          <Card.Title>Get your seat</Card.Title>
           <Card.Description>
-            Join TicketMaster to book your favorite events
+            Create an account to reserve seats. It takes a minute.
           </Card.Description>
         </Card.Header>
         
@@ -115,7 +115,7 @@ export function RegisterPage() {
               isLoading={isLoading}
               className={styles.submitButton}
             >
-              Create Account
+              Create account
             </Button>
           </form>
         </Card.Content>
@@ -124,7 +124,7 @@ export function RegisterPage() {
           <p>
             Already have an account?{' '}
             <Link to="/login" className={styles.link}>
-              Sign in
+              Log in
             </Link>
           </p>
         </Card.Footer>
