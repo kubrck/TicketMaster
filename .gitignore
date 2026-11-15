@@ -4,7 +4,7 @@
 *.dll
 *.so
 *.dylib
-server
+/server
 event-ticketing-system
 event-ticketing-system.exe
 
@@ -92,6 +92,6 @@ __debug_bin
 
 # Load testing results
 loadtest/results/
-*.html
+loadtest/**/*.html
 
 .cursor/
