@@ -47,7 +47,7 @@
 }
 
 .weekday {
-  color: #b8b0a2;
+  color: var(--inverse-muted);
 }
 
 .day {

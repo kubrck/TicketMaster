@@ -7,6 +7,7 @@ import { LogOut, Menu, X } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui';
+import { ThemeToggle } from './ThemeToggle';
 import styles from './Header.module.css';
 
 export function Header() {
@@ -77,19 +78,22 @@ export function Header() {
             )}
           </nav>
 
-          <button
-            type="button"
-            className={styles.mobileMenuButton}
-            onClick={toggleMobileMenu}
-            aria-label="Toggle menu"
-            aria-expanded={isMobileMenuOpen}
-          >
-            {isMobileMenuOpen ? (
-              <X className={styles.menuIcon} />
-            ) : (
-              <Menu className={styles.menuIcon} />
-            )}
-          </button>
+          <div className={styles.headerTools}>
+            <ThemeToggle />
+            <button
+              type="button"
+              className={styles.mobileMenuButton}
+              onClick={toggleMobileMenu}
+              aria-label="Toggle menu"
+              aria-expanded={isMobileMenuOpen}
+            >
+              {isMobileMenuOpen ? (
+                <X className={styles.menuIcon} />
+              ) : (
+                <Menu className={styles.menuIcon} />
+              )}
+            </button>
+          </div>
         </div>
 
         {isMobileMenuOpen && (

@@ -267,7 +267,7 @@
 .seatSold {
   background: var(--paper-sunk);
   color: var(--ink-3);
-  border-color: var(--paper-sunk);
+  border-color: var(--line-strong);
 }
 
 .seat.seatSold {
@@ -278,7 +278,7 @@
 .seat.seatSelected:hover:not(:disabled) {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   transform: translateY(-2px);
 }
 
@@ -369,7 +369,7 @@
 }
 
 .summaryItem dt {
-  color: #b8b0a2;
+  color: var(--inverse-muted);
 }
 
 .summaryItem dd {
@@ -382,13 +382,13 @@
 }
 
 .summaryEmpty {
-  color: #b8b0a2;
+  color: var(--inverse-muted);
 }
 
 .summaryStub {
   position: relative;
   padding: 1.25rem 1.75rem 1.5rem;
-  border-top: 2px dashed rgb(243 239 230 / 0.3);
+  border-top: 2px dashed var(--inverse-line);
 }
 
 /* Notches sit on the perforation, so they follow it when the stub grows */
@@ -418,7 +418,7 @@
   margin-bottom: 1rem;
   font-family: var(--font-mono);
   font-size: 0.875rem;
-  color: #b8b0a2;
+  color: var(--inverse-muted);
 }
 
 .totalPrice {
@@ -448,6 +448,6 @@
   margin: 0.75rem 0 0;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
-  color: #b8b0a2;
+  color: var(--inverse-muted);
   text-align: center;
 }

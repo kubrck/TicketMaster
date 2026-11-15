@@ -21,6 +21,14 @@
   --warn: #8a5a10;
   --warn-soft: #f3e4c4;
 
+  /* Inverse surfaces: ticket stubs, the "Your ticket" panel, primary buttons */
+  --inverse-muted: #b8b0a2;
+  --inverse-line: rgb(243 239 230 / 0.3);
+  --on-accent: #fff;
+  --header-bg: rgb(243 239 230 / 0.92);
+  --shadow-rgb: 23 19 14;
+  color-scheme: light;
+
   /* Type */
   --font-display: 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
   --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -62,15 +70,43 @@
   --radius-xl: 14px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 0 rgb(23 19 14 / 0.06);
-  --shadow-md: 0 1px 2px rgb(23 19 14 / 0.08), 0 6px 16px -8px rgb(23 19 14 / 0.18);
-  --shadow-lg: 0 2px 4px rgb(23 19 14 / 0.08), 0 18px 40px -16px rgb(23 19 14 / 0.3);
+  --shadow-sm: 0 1px 0 rgb(var(--shadow-rgb) / 0.06);
+  --shadow-md: 0 1px 2px rgb(var(--shadow-rgb) / 0.08), 0 6px 16px -8px rgb(var(--shadow-rgb) / 0.18);
+  --shadow-lg: 0 2px 4px rgb(var(--shadow-rgb) / 0.08), 0 18px 40px -16px rgb(var(--shadow-rgb) / 0.3);
 
   --transition-fast: 120ms ease;
   --transition-normal: 200ms ease;
 
   --page-width: 1180px;
   --gutter: clamp(16px, 4vw, 40px);
+}
+
+/* Dark: a dark house with cream paper tickets. --ink and --paper swap, so every
+   ink-on-paper surface (stubs, buttons, the ticket panel) turns cream automatically.
+   The theme is set on <html data-theme> by the script in index.html. */
+:root[data-theme='dark'] {
+  --paper: #15120e;
+  --paper-sunk: #221d17;
+  --card: #1f1a15;
+  --ink: #efe8da;
+  --ink-2: #c2b8a8;
+  --ink-3: #a39989;
+  --line: rgb(239 232 218 / 0.14);
+  --line-strong: rgb(239 232 218 / 0.3);
+  --accent: #f0603f;          /* 5.7:1 on paper */
+  --accent-hover: #ff7a5c;
+  --accent-on-ink: #c0341b;   /* on the cream inverse surfaces, 4.6:1 */
+  --accent-soft: #45211a;
+  --ok: #7cc49a;
+  --ok-soft: #173022;
+  --warn: #e3b05a;
+  --warn-soft: #3b2d14;
+  --inverse-muted: #5f574b;
+  --inverse-line: rgb(21 18 14 / 0.3);
+  --on-accent: #15120e;       /* white on this red is only 3.3:1 */
+  --header-bg: rgb(21 18 14 / 0.9);
+  --shadow-rgb: 0 0 0;
+  color-scheme: dark;
 }
 
 *,

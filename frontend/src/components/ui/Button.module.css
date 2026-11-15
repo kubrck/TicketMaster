@@ -39,7 +39,7 @@
 
 .secondary {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 .secondary:hover:not(:disabled) {
   background: var(--accent-hover);
@@ -71,7 +71,7 @@
 .danger:hover:not(:disabled) {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .icon {

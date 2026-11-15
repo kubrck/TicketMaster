@@ -4,7 +4,22 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#F3EFE6" />
+    <meta name="theme-color" content="#f3efe6" />
+    <script>
+      // Pick the theme before first paint: saved choice, else the system setting
+      (function () {
+        var mq = window.matchMedia('(prefers-color-scheme: dark)');
+        function saved() { try { return localStorage.getItem('theme'); } catch (e) { return null; } }
+        function apply(t) {
+          document.documentElement.dataset.theme = t;
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', t === 'dark' ? '#15120e' : '#f3efe6');
+        }
+        apply(saved() || (mq.matches ? 'dark' : 'light'));
+        mq.addEventListener('change', function (e) { if (!saved()) apply(e.matches ? 'dark' : 'light'); });
+        window.__applyTheme = apply;
+      })();
+    </script>
     <meta name="description" content="Pick a seat on the live map. It's held for you for ten minutes while you check out." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

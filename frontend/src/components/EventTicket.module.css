@@ -1,13 +1,13 @@
 .link {
   display: block;
   color: inherit;
-  filter: drop-shadow(0 1px 1px rgb(23 19 14 / 0.08)) drop-shadow(0 8px 14px rgb(23 19 14 / 0.08));
+  filter: drop-shadow(0 1px 1px rgb(var(--shadow-rgb) / 0.08)) drop-shadow(0 8px 14px rgb(var(--shadow-rgb) / 0.08));
   transition: transform var(--transition-normal), filter var(--transition-normal);
 }
 
 .link:hover {
   transform: translateY(-3px) rotate(-0.4deg);
-  filter: drop-shadow(0 1px 1px rgb(23 19 14 / 0.1)) drop-shadow(0 16px 22px rgb(23 19 14 / 0.14));
+  filter: drop-shadow(0 1px 1px rgb(var(--shadow-rgb) / 0.1)) drop-shadow(0 16px 22px rgb(var(--shadow-rgb) / 0.14));
 }
 
 .link:focus-visible {
