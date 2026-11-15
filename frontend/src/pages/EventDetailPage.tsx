@@ -44,19 +44,18 @@ export function EventDetailPage() {
         seat_number: selectedSeat.seat_number,
       });
       
+      // Without a queue the backend books synchronously and returns the booking
+      if (!('job_id' in response)) return;
+
       const jobResult = await waitForJobCompletion(response.job_id);
-      
+
       if (jobResult.status === 'failed') {
         throw new Error(jobResult.error || 'Reservation failed');
       }
-      
-      return jobResult;
     },
-    onSuccess: (result) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['seats', id] });
-      if (result.booking_id) {
-        navigate(`/my-bookings`);
-      }
+      navigate(`/my-bookings`);
     },
     onError: (error) => {
       setReservationError(error instanceof Error ? error.message : 'Reservation failed');

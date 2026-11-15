@@ -98,8 +98,8 @@ export interface SeatsResponse {
 
 // Booking status
 export const BookingStatus = {
-  PENDING: 'pending',
-  CONFIRMED: 'confirmed',
+  RESERVED: 'reserved',
+  PURCHASED: 'purchased',
   CANCELLED: 'cancelled',
   EXPIRED: 'expired',
 } as const;
@@ -116,11 +116,14 @@ export interface Booking {
   total_amount: number;
   reserved_at: string;
   expires_at: string;
-  confirmed_at?: string;
+  purchased_at?: string;
   created_at: string;
   updated_at: string;
-  event?: Event;
-  seat?: Seat;
+  // Flat details sent by GET /bookings/my-bookings (BookingWithDetails)
+  event_title?: string;
+  event_date?: string;
+  seat_number?: string;
+  venue_name?: string;
 }
 
 // ReserveSeatRequest is what we send to reserve a seat
@@ -129,11 +132,8 @@ export interface ReserveSeatRequest {
   seat_number: string;
 }
 
-// ReserveResponse is what we get back (async job)
-export interface ReserveResponse {
-  job_id: string;
-  message: string;
-}
+// ReserveResponse: 202 { job_id } when the queue is on, else 201 with the Booking itself
+export type ReserveResponse = { job_id: string; message: string } | Booking;
 
 // JobStatus is what we get when checking async job status
 export interface JobStatus {

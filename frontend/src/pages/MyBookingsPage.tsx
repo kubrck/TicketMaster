@@ -77,8 +77,8 @@ export function MyBookingsPage() {
 
   const getStatusBadge = (status: BookingStatusType) => {
     const statusConfig: Record<string, { class: string; label: string }> = {
-      pending: { class: styles.statusPending, label: 'Pending Payment' },
-      confirmed: { class: styles.statusConfirmed, label: 'Confirmed' },
+      reserved: { class: styles.statusPending, label: 'Pending Payment' },
+      purchased: { class: styles.statusConfirmed, label: 'Confirmed' },
       cancelled: { class: styles.statusCancelled, label: 'Cancelled' },
       expired: { class: styles.statusExpired, label: 'Expired' },
     };
@@ -144,42 +144,36 @@ export function MyBookingsPage() {
                 <div className={styles.bookingMain}>
                   <div className={styles.bookingHeader}>
                     <h3 className={styles.eventTitle}>
-                      {booking.event?.title || 'Event'}
+                      {booking.event_title || 'Event'}
                     </h3>
                     {getStatusBadge(booking.status)}
                   </div>
 
-                  {booking.event && (
-                    <div className={styles.bookingMeta}>
+                  <div className={styles.bookingMeta}>
+                    {booking.event_date && (
                       <div className={styles.metaItem}>
                         <Calendar className={styles.metaIcon} />
                         <span>
-                          {formatDate(booking.event.event_date)} at{' '}
-                          {formatTime(booking.event.event_date)}
+                          {formatDate(booking.event_date)} at{' '}
+                          {formatTime(booking.event_date)}
                         </span>
                       </div>
-                      {booking.event.venue && (
-                        <div className={styles.metaItem}>
-                          <MapPin className={styles.metaIcon} />
-                          <span>
-                            {booking.event.venue.name}, {booking.event.venue.city}
-                          </span>
-                        </div>
-                      )}
-                      {booking.seat && (
-                        <div className={styles.metaItem}>
-                          <Ticket className={styles.metaIcon} />
-                          <span>
-                            Seat {booking.seat.seat_number}
-                            {booking.seat.row_number && `, Row ${booking.seat.row_number}`}
-                            {booking.seat.section && ` - ${booking.seat.section}`}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                    )}
+                    {booking.venue_name && (
+                      <div className={styles.metaItem}>
+                        <MapPin className={styles.metaIcon} />
+                        <span>{booking.venue_name}</span>
+                      </div>
+                    )}
+                    {booking.seat_number && (
+                      <div className={styles.metaItem}>
+                        <Ticket className={styles.metaIcon} />
+                        <span>Seat {booking.seat_number}</span>
+                      </div>
+                    )}
+                  </div>
 
-                  {booking.status === 'pending' && (
+                  {booking.status === 'reserved' && (
                     <div className={styles.expiryWarning}>
                       {getRemainingTime(booking.expires_at) || 'Expiring soon'}
                     </div>
@@ -195,7 +189,7 @@ export function MyBookingsPage() {
                   </div>
 
                   <div className={styles.actionButtons}>
-                    {booking.status === 'pending' && (
+                    {booking.status === 'reserved' && (
                       <>
                         <Button
                           variant="primary"
@@ -218,7 +212,7 @@ export function MyBookingsPage() {
                       </>
                     )}
                     
-                    {booking.status === 'confirmed' && (
+                    {booking.status === 'purchased' && (
                       <Link to={`/events/${booking.event_id}`}>
                         <Button variant="outline" size="sm">
                           View Event
