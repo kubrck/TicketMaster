@@ -2,10 +2,11 @@
  * EventDetailPage - View event details and select seats
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getEvent, getEventSeats } from '@/services/events';
+import { WS_URL } from '@/services/api';
 import { reserveSeat, waitForJobCompletion } from '@/services/bookings';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui';
@@ -31,8 +32,21 @@ export function EventDetailPage() {
     queryKey: ['seats', id],
     queryFn: () => getEventSeats(id!),
     enabled: !!id,
-    refetchInterval: 10000, // Refresh seats every 10 seconds
+    refetchInterval: 30000, // fallback only; live updates arrive over the WebSocket below
   });
+
+  // Live seat map: the server pushes a seat_update whenever a seat on this event changes.
+  // shortcut: no reconnect on drop, the 30 s refetch covers it; add backoff reconnect if that's too slow.
+  useEffect(() => {
+    if (!id) return;
+    const ws = new WebSocket(WS_URL);
+    ws.onopen = () => ws.send(JSON.stringify({ type: 'subscribe', event_id: id }));
+    ws.onmessage = () => {
+      queryClient.invalidateQueries({ queryKey: ['seats', id] });
+      queryClient.invalidateQueries({ queryKey: ['event', id] });
+    };
+    return () => ws.close();
+  }, [id, queryClient]);
 
   const reserveMutation = useMutation({
     mutationFn: async () => {

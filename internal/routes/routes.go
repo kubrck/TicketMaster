@@ -61,6 +61,8 @@ func SetupRoutes(
 	kafkaProducer, err := kafka.NewProducer(cfg)
 	if err == nil && kafkaProducer.Enabled() {
 		bookingService.SetEventPublisher(services.NewKafkaEventPublisher(kafkaProducer))
+	} else {
+		bookingService.SetEventPublisher(services.NewHubEventPublisher(hub))
 	}
 
 	authHandler := handlers.NewAuthHandler(authService)
@@ -122,7 +124,9 @@ func SetupRoutes(
 	bookings.GET("/:id", bookingHandler.GetBooking)
 	bookings.DELETE("/:id", bookingHandler.CancelBooking)
 
-	protected.GET("/ws", wsHandler.HandleWebSocket)
+	// Public: browsers can't send auth headers on WebSockets, and it only streams
+	// seat status, which GET /events/:id/seats already serves without auth.
+	api.GET("/ws", wsHandler.HandleWebSocket)
 
 	return router
 }

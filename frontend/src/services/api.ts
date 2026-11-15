@@ -11,6 +11,13 @@ import type { ApiError } from '@/types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
+// Vercel rewrites can't proxy WebSockets, so production connects to the Render API directly
+// (same host as the /api rewrite in vercel.json). In dev, Vite proxies /api/ws.
+export const WS_URL = import.meta.env.VITE_WS_URL
+  || (import.meta.env.PROD
+    ? 'wss://ticketmaster-l6oa.onrender.com/api/ws'
+    : `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/api/ws`);
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,

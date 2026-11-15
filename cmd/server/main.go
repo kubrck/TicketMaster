@@ -99,6 +99,7 @@ func main() {
 		defer consumer.Close()
 		go services.NewBookingEventConsumer(consumer, eventService.InvalidateEventCache, hub).Run(ctx)
 	} else {
+		bookingService.SetEventPublisher(services.NewHubEventPublisher(hub)) // expiry releases update live seat maps
 		log.Println("Kafka command queue not configured; bookings are processed synchronously")
 	}
 
