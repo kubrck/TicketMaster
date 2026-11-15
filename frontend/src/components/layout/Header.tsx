@@ -52,6 +52,11 @@ export function Header() {
                 <NavLink to="/my-bookings" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}>
                   My tickets
                 </NavLink>
+                {user?.role === 'admin' && (
+                  <NavLink to="/admin" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}>
+                    Admin
+                  </NavLink>
+                )}
                 
                 <div className={styles.userSection}>
                   <span className={styles.userName}>{user?.full_name}</span>
@@ -116,6 +121,11 @@ export function Header() {
                   >
                     My tickets
                   </Link>
+                  {user?.role === 'admin' && (
+                    <Link to="/admin" className={styles.mobileNavLink} onClick={closeMobileMenu}>
+                      Admin
+                    </Link>
+                  )}
                   <div className={styles.mobileUserSection}>
                     <p className={styles.mobileUserEmail}>
                       Signed in as {user?.email}

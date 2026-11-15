@@ -17,8 +17,10 @@ import {
   RegisterPage, 
   EventsPage, 
   EventDetailPage,
-  MyBookingsPage 
+  MyBookingsPage,
+  AdminPage
 } from '@/pages';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 import styles from './App.module.css';
 
 const queryClient = new QueryClient({
@@ -44,6 +46,7 @@ function App() {
               <Route path="login" element={<LoginPage />} />
               <Route path="register" element={<RegisterPage />} />
               <Route path="my-bookings" element={<MyBookingsPage />} />
+              <Route path="admin" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFoundPage />} />
             </Route>
           </Routes>

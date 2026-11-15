@@ -3,7 +3,7 @@
  */
 
 import api from './api';
-import type { Event, SeatsResponse } from '@/types';
+import type { Event, SeatsResponse, Venue } from '@/types';
 
 /**
  * Get all events
@@ -39,5 +39,24 @@ export async function getEventSeats(
 ): Promise<SeatsResponse> {
   const params = status ? { status } : {};
   const response = await api.get<SeatsResponse>(`/events/${eventId}/seats`, { params });
+  return response.data;
+}
+
+// Admin-only endpoints: the API answers 403 for non-admins, so the UI gate is just convenience.
+
+export async function getVenues(): Promise<Venue[]> {
+  const response = await api.get<Venue[]>('/venues');
+  return response.data;
+}
+
+export async function createVenue(venue: Pick<Venue, 'name' | 'address' | 'capacity'>): Promise<Venue> {
+  const response = await api.post<Venue>('/venues', venue);
+  return response.data;
+}
+
+export async function createEvent(
+  event: Pick<Event, 'venue_id' | 'title' | 'description' | 'event_date' | 'ticket_price' | 'total_seats'>
+): Promise<Event> {
+  const response = await api.post<Event>('/events', event);
   return response.data;
 }

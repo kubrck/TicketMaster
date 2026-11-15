@@ -41,7 +41,7 @@ export interface Venue {
   id: string;
   name: string;
   address: string;
-  city: string;
+  city?: string;  // not returned by the API
   capacity: number;
   created_at: string;
 }

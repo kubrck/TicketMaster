@@ -8,3 +8,4 @@ export { RegisterPage } from './RegisterPage';
 export { EventsPage } from './EventsPage';
 export { EventDetailPage } from './EventDetailPage';
 export { MyBookingsPage } from './MyBookingsPage';
+export { AdminPage } from './AdminPage';
