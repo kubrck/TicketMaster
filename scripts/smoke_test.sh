@@ -4,7 +4,10 @@
 set -uo pipefail
 BASE=${1:-http://localhost:8080}
 cd "$(dirname "$0")/.." && set -a && . ./.env && set +a
-ADMIN_EMAIL=${ADMIN_EMAIL:-demo-admin@example.com}; PASS=${DEMO_PASSWORD:-demo1234}
+# Fresh admin per run, demoted on exit: its password is public, so it must never stay admin.
+ADMIN_EMAIL="smoke-admin-$RANDOM$RANDOM@example.com"; PASS=${DEMO_PASSWORD:-demo1234}
+demote() { psql "$DATABASE_URL" -qtAc "UPDATE users SET role='user' WHERE email='$ADMIN_EMAIL'" >/dev/null; }
+trap demote EXIT
 fails=0
 check() { if [ "$2" = "$3" ]; then echo "  PASS  $1"; else echo "  FAIL  $1 (expected $3, got $2)"; fails=$((fails+1)); fi; }
 req() { curl -s -o /tmp/smoke_body -w '%{http_code}' -H 'Content-Type: application/json' "$@"; }
